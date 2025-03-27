@@ -1,0 +1,45 @@
+{
+  "name": "tenuto",
+  "version": "0.0.1",
+  "description": "Declarative state meets sustained, imperative behavior.",
+  "type": "module",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsup src/index.ts --format esm,cjs --dts",
+    "test": "vitest",
+    "lint": "eslint . --ext .ts",
+    "format": "prettier --write ."
+  },
+  "files": [
+    "dist"
+  ],
+  "keywords": [
+    "state",
+    "runtime",
+    "declarative",
+    "component",
+    "reconciliation",
+    "tenuto"
+  ],
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^22.13.14",
+    "@typescript-eslint/eslint-plugin": "^8.28.0",
+    "@typescript-eslint/parser": "^8.28.0",
+    "eslint": "^9.23.0",
+    "eslint-config-prettier": "^10.1.1",
+    "eslint-plugin-prettier": "^5.2.5",
+    "prettier": "^3.5.3",
+    "tsup": "^8.4.0",
+    "typescript-eslint": "^8.28.0",
+    "vitest": "^3.0.9"
+  }
+}
