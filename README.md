@@ -38,21 +38,6 @@ pnpm add tenuto
 
 ## 🧠 Core Concepts
 
-### `Score()`
-
-The central orchestrator. It handles signals, applies reducers, transforms state, and syncs Loops.
-
-```ts
-import { Score } from "tenuto";
-
-Score()
-  .withReducers([yourReducer])
-  .withTransformers([yourTransformer])
-  .withRootLoop(AppLoop)
-  .withInitialState(initialState)
-  .start();
-```
-
 ### 🔁 `Loop(...)`
 
 **Loops are the core primitive of Tenuto.**  
@@ -122,6 +107,21 @@ const ParentLoop = Loop({
 ```
 
 This pattern is ideal for managing subtrees of state or imperative sidecar objects (like renderables, contexts, or network subscriptions).
+
+### `Score()`
+
+Tenuto also provides an optional central orchestrator. It handles signals, applies reducers, transforms state, and syncs Loops.
+
+```ts
+import { Score } from "tenuto";
+
+Score()
+  .withReducers([yourReducer])
+  .withTransformers([yourTransformer])
+  .withRootLoop(AppLoop)
+  .withInitialState(initialState)
+  .start();
+```
 
 ---
 
