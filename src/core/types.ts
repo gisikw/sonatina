@@ -4,7 +4,9 @@ export type Action = string;
 export type Payload = unknown;
 export type Signal = [Action, Payload];
 
-type ReducerFn = (data: unknown, signal: Signal) => unknown;
+export type Plugin = (core: Core) => Core;
+
+type ReducerFn = (data: unknown, signal: Signal, cue: unknown) => unknown;
 export type Reducer = ReducerFn & { ACTIONS?: Action[] };
 export type PrivilegedReducer = (core: Core) => Reducer;
 
@@ -20,14 +22,14 @@ export type Loop<State, Data, Ctx> = {
 };
 
 export type Score = {
+  compose: (plugin: Plugin) => Score;
   send: (action: Action, payload: Payload) => Score;
 };
 
 export type Core = {
-  state: unknown;
-  rootState: unknown;
-  root: Loop<unknown, unknown, unknown>;
-  api: Score;
   reducers: Reducer[];
-  transformers: Transformer[];
+  state: unknown;
+  api: Score;
+  cue: unknown;
+  motif: (signal: Signal) => void;
 };

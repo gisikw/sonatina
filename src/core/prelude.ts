@@ -8,6 +8,7 @@ import type {
   PrivilegedReducer,
 } from "./types";
 import { CORE_ACTIONS } from "./constants";
+const UNCHANGED = Symbol("unchanged");
 
 export const prelude: PrivilegedReducer = (core): Reducer => {
   let rootArg: Loop<unknown, unknown, unknown>;
@@ -17,7 +18,18 @@ export const prelude: PrivilegedReducer = (core): Reducer => {
     },
   };
 
+  const cue = {
+    effect(action: Action, payload: Payload): void {
+      core.cueState.effects.push([action, payload]);
+    },
+    unchanged: UNCHANGED,
+  };
+
   const preludeReducer: Reducer = (state, [action, payload]) => {
+    core.cueState = {
+      effects: [],
+      handled: false,
+    };
     switch (action) {
       case CORE_ACTIONS.WITH_INITIAL_STATE:
         return payload;
@@ -25,16 +37,20 @@ export const prelude: PrivilegedReducer = (core): Reducer => {
         rootArg = payload as Loop<unknown, unknown, unknown>;
         break;
       case CORE_ACTIONS.WITH_REDUCERS:
-        core.reducers.push(...(payload as Reducer[]));
-        (payload as Reducer[]).forEach((reducer) =>
-          addFluentMethods(core.api, reducer),
-        );
+        (payload as Reducer[]).forEach((reducer) => {
+          addFluentMethods(core.api, reducer);
+          core.reducers.push((state, signal) => {
+            const res = reducer(state, signal, cue);
+            if (res !== UNCHANGED) core.cueState.handled = true;
+            return res;
+          });
+        });
         break;
       case CORE_ACTIONS.WITH_TRANSFORMERS:
         core.transformers.push(...(payload as Transformer[]));
         break;
       case CORE_ACTIONS.WITH_FORWARD_TARGET:
-        console.log("TODO"); // Implicitly needs coda now
+        core.forward = payload;
         break;
       case CORE_ACTIONS.START:
         if (!rootArg) {
@@ -63,11 +79,11 @@ export const prelude: PrivilegedReducer = (core): Reducer => {
   return preludeReducer;
 };
 
-function addFluentMethods(api: Score, reducer: Reducer): void {
+const addFluentMethods = (api: Score, reducer: Reducer): void => {
   for (const actionName of reducer.ACTIONS ?? []) {
     Object.assign(api, {
       [actionName]: (action: Action, payload: Payload) =>
         api.send(action, payload),
     });
   }
-}
+};
