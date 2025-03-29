@@ -7,7 +7,9 @@ export function Phrase<State, Data, Ctx, FullData = Data>(
   return {
     play(prev, fullData, ctx): Maybe<State> {
       if (fullData) {
-        const data = select ? select(fullData as FullData) : fullData;
+        const data = select
+          ? select(fullData as unknown as FullData)
+          : fullData;
         return prev ? update(prev, data, ctx) : create(data, ctx);
       }
       if (prev) destroy(prev, ctx);
