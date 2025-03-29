@@ -1,9 +1,9 @@
 import { test, expect } from "vitest";
-import { Loop } from "./loop";
+import { Phrase } from "./phrase";
 
 test("correct dispatching to create/update/destroy", () => {
   const dispatches: string[] = [];
-  const TestLoop = Loop({
+  const TestPhrase = Phrase({
     create() {
       dispatches.push("create");
       return {};
@@ -17,10 +17,10 @@ test("correct dispatching to create/update/destroy", () => {
     },
   });
 
-  let loop;
-  loop = TestLoop.sync(loop, {}, {});
-  loop = TestLoop.sync(loop, {}, {});
-  TestLoop.sync(loop, null, {});
+  let phrase;
+  phrase = TestPhrase.play(phrase, {}, {});
+  phrase = TestPhrase.play(phrase, {}, {});
+  TestPhrase.play(phrase, null, {});
 
   expect(dispatches).toEqual(["create", "update", "destroy"]);
 });
