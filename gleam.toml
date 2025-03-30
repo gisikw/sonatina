@@ -1,0 +1,15 @@
+name = "sonatina"
+version = "0.1.1"
+
+description = "A Gleam library for composing declarative state and imperative behaviors in JavaScript and on the BEAM"
+licences = ["Apache-2.0"]
+repository = { type = "github", user = "gisikw", repo = "sonatina" }
+
+[dependencies]
+gleam_stdlib = ">= 0.44.0 and < 2.0.0"
+
+[javascript]
+typescript_declarations = true
+
+[dev-dependencies]
+gleeunit = ">= 1.0.0 and < 2.0.0"
