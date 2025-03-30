@@ -6,12 +6,22 @@ pub type Phrase(state, data, context) {
   )
 }
 
+pub fn identity_selector(arg) {
+  Some(arg)
+}
+
 pub fn new(
   create create: fn(data, Option(context)) -> state,
   update update: fn(state, data, Option(context)) -> state,
   destroy destroy: fn(state, Option(context)) -> Nil,
-) -> Phrase(state, data, context) {
-  Phrase(play: fn(prev, data, ctx) {
+  select select: fn(full_data) -> Option(data),
+) -> Phrase(state, full_data, context) {
+  Phrase(play: fn(prev, full_data, ctx) {
+    let data = case full_data {
+      Some(full_data) -> select(full_data)
+      None -> None
+    }
+
     case data {
       Some(data) ->
         case prev {
@@ -26,24 +36,6 @@ pub fn new(
           }
           None -> None
         }
-    }
-  })
-}
-
-pub type SelectedPhrase(state, full_data, context) {
-  SelectedPhrase(
-    play: fn(Option(state), Option(full_data), Option(context)) -> Option(state),
-  )
-}
-
-pub fn with_selector(
-  phrase phrase: Phrase(state, data, context),
-  select select: fn(full_data) -> Option(data),
-) {
-  SelectedPhrase(play: fn(prev, full_data, ctx) {
-    case full_data {
-      Some(full_data) -> phrase.play(prev, select(full_data), ctx)
-      None -> phrase.play(prev, None, ctx)
     }
   })
 }

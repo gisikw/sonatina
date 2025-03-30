@@ -15,8 +15,8 @@ pub fn dispatch_create_update_destroy_test() {
       create: fn(data, _context) { [["create", data]] },
       update: fn(state, data, _context) { [["update", data], ..state] },
       destroy: fn(_state, _context) { Nil },
+      select: phrase.identity_selector,
     )
-    |> phrase.with_selector(fn(full_data) { Some(full_data) })
 
   let state = None
   let state = test_phrase.play(state, Some("data1"), None)
@@ -38,13 +38,13 @@ pub fn dispatch_create_update_destroy_with_select_test() {
       create: fn(data, _context) { [["create", data]] },
       update: fn(state, data, _context) { [["update", data], ..state] },
       destroy: fn(_state, _context) { Nil },
+      select: fn(full_data) {
+        case list.first(full_data) {
+          Ok(result) -> Some(result)
+          _ -> None
+        }
+      },
     )
-    |> phrase.with_selector(fn(full_data) {
-      case list.first(full_data) {
-        Ok(result) -> Some(result)
-        _ -> None
-      }
-    })
 
   let state = None
   let state = test_phrase.play(state, Some(["data1", "nonsense"]), None)
