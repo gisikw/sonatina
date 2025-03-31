@@ -1,41 +1,79 @@
 import gleam/option.{type Option, None, Some}
 
-pub type Phrase(state, data, context) {
+pub type Phrase(full_data, data, retained, context) {
   Phrase(
-    play: fn(Option(state), Option(data), Option(context)) -> Option(state),
+    select: fn(full_data) -> Option(data),
+    create: Option(fn(data, Option(context)) -> retained),
+    update: Option(
+      fn(data, data, Option(retained), Option(context)) -> retained,
+    ),
+    destroy: Option(fn(Option(retained), Option(context)) -> Nil),
+    retained: Option(retained),
+    prev: Option(data),
+    play: fn(Option(full_data), Option(context)) ->
+      Phrase(full_data, data, retained, context),
   )
 }
 
-pub fn identity_selector(arg) {
-  Some(arg)
+pub fn identity_selector(a) {
+  Some(a)
 }
 
-pub fn new(
-  create create: fn(data, Option(context)) -> state,
-  update update: fn(state, data, Option(context)) -> state,
-  destroy destroy: fn(state, Option(context)) -> Nil,
-  select select: fn(full_data) -> Option(data),
-) -> Phrase(state, full_data, context) {
-  Phrase(play: fn(prev, full_data, ctx) {
-    let data = case full_data {
-      Some(full_data) -> select(full_data)
-      None -> None
-    }
+pub fn new(select select, create create, update update, destroy destroy) {
+  wrap(select, create, update, destroy, None, None)
+}
 
-    case data {
-      Some(data) ->
-        case prev {
-          None -> Some(create(data, ctx))
-          Some(prev) -> Some(update(prev, data, ctx))
-        }
-      None ->
-        case prev {
-          Some(prev) -> {
-            destroy(prev, ctx)
-            None
+fn wrap(select, create, update, destroy, retained, prev) {
+  Phrase(
+    select:,
+    create:,
+    update:,
+    destroy:,
+    retained:,
+    prev:,
+    play: fn(full_data, context) {
+      play(select, create, update, destroy, retained, prev, full_data, context)
+    },
+  )
+}
+
+fn play(select, create, update, destroy, retained, prev, full_data, context) {
+  let selected_data = case full_data {
+    Some(full_data) -> select(full_data)
+    None -> None
+  }
+
+  let retained = case selected_data {
+    Some(data) ->
+      case prev {
+        None ->
+          case create {
+            Some(create) -> Some(create(data, context))
+            None -> retained
           }
-          None -> None
-        }
-    }
-  })
+        Some(prev) ->
+          case data == prev {
+            True -> retained
+            False ->
+              case update {
+                Some(update) -> Some(update(prev, data, retained, context))
+                None -> retained
+              }
+          }
+      }
+    None ->
+      case prev {
+        Some(_) ->
+          case destroy {
+            Some(destroy) -> {
+              destroy(retained, context)
+              None
+            }
+            None -> retained
+          }
+        None -> retained
+      }
+  }
+
+  wrap(select, create, update, destroy, retained, selected_data)
 }
