@@ -9,6 +9,7 @@ repository = { type = "github", user = "gisikw", repo = "sonatina" }
 gleam_stdlib = ">= 0.44.0 and < 2.0.0"
 
 [javascript]
+target = "javascript"
 typescript_declarations = true
 
 [dev-dependencies]

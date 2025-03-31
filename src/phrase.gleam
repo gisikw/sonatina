@@ -19,7 +19,7 @@ pub fn identity_selector(a) {
   Some(a)
 }
 
-pub fn new(select select, create create, update update, destroy destroy) {
+pub fn compose(select select, create create, update update, destroy destroy) {
   wrap(select, create, update, destroy, None, None)
 }
 

@@ -11,12 +11,12 @@ pub fn main() {
 
 pub fn dispatch_create_update_destroy_test() {
   let subject =
-    phrase.new(
+    phrase.compose(
       create: Some(fn(data, _context) { [["create", data]] }),
       update: Some(fn(_prev, data, retained, _context) {
         [["update", data], ..unwrap(retained, [])]
       }),
-      destroy: Some(fn(_state, _context) { Nil }),
+      destroy: Some(fn(_retained, _context) { Nil }),
       select: phrase.identity_selector,
     )
 
@@ -40,12 +40,12 @@ pub fn dispatch_create_update_destroy_test() {
 
 pub fn dispatch_create_update_destroy_with_select_test() {
   let subject =
-    phrase.new(
+    phrase.compose(
       create: Some(fn(data, _context) { [["create", data]] }),
       update: Some(fn(_prev, data, retained, _context) {
         [["update", data], ..unwrap(retained, [])]
       }),
-      destroy: Some(fn(_state, _context) { Nil }),
+      destroy: Some(fn(_retained, _context) { Nil }),
       select: fn(full_data) {
         case list.first(full_data) {
           Ok(result) -> Some(result)
