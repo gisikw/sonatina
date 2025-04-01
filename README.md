@@ -5,7 +5,7 @@
 [![NPM Package Version](https://img.shields.io/npm/v/sonatina)](https://www.npmjs.com/package/sonatina)
 
 **Sonatina** is a small library for composing declarative state and imperative behaviors.  
-It helps you reconcile updates to a state tree with side effects or mutations - cleanly and predictably.
+It helps you reconcile changes to application state with side effects and mutations - cleanly and predictably.
 
 > ⚠️ **Warning: This project is still experimental.**
 >
@@ -15,14 +15,17 @@ It helps you reconcile updates to a state tree with side effects or mutations - 
 
 ---
 
-## ✨ Currently included
+## 🧱 Core Components
 
 ### `Phrase`
 
-A Phrase encapsulates a declarative lifecycle — create, update, and destroy —
+A Phrase encapsulates a declarative lifecycle - create, update, and destroy -
 driven by a focused slice of application state you define with a selector.
-It reconciles state changes through `.play()`:
+It reconciles state changes through `.play()`
 
+This makes `Phrase` ideal for managing lifecycle-bound logic, like animations, renderables, subscriptions, etc.
+
+#### TypeScript
 ```ts
 import { Phrase } from "sonatina";
 import * as PIXI from "pixi.js";
@@ -62,6 +65,7 @@ state = {};
 phrase = phrase.play(state, { app }); // -> destroy
 ```
 
+#### Gleam
 ```gleam
 import gleam/option.{ Option, Some, None, unwrap }
 import gleam/otp.{ actor, process }
@@ -98,8 +102,6 @@ pub fn run() {
 }
 ```
 
-This makes `Phrase` ideal for managing lifecycle-bound logic, like animations, renderables, subscriptions, etc.
-
 ---
 
 ## 📦 Install
@@ -115,7 +117,7 @@ yarn add sonatina
 
 ### Gleam
 ```bash
-gleam add sonatina@0.1
+gleam add sonatina@0.1.1
 ```
 
 ---
