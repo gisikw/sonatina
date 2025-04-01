@@ -1,20 +1,20 @@
 {
   "name": "sonatina",
   "version": "0.1.0",
-  "description": "Sonatina: Composing declarative state and imperative behaviors ",
+  "description": "Sonatina: Composing declarative state and imperative behaviors",
   "type": "module",
-  "main": "dist/index.js",
-  "module": "dist/index.mjs",
-  "types": "dist/index.d.ts",
+  "main": "dist/sonatina.cjs",
+  "module": "dist/sonatina.js",
+  "types": "dist/sonatina.d.ts",
   "exports": {
     ".": {
-      "import": "./dist/index.mjs",
-      "require": "./dist/index.js"
+      "import": "./dist/sonatina.js",
+      "require": "./dist/sonatina.cjs"
     }
   },
   "scripts": {
-    "build": "tsc && tsup src/index.ts --format esm,cjs",
-    "test": "vitest --dir test",
+    "build": "gleam build && tsup src/sonatina.ts --dts --format esm,cjs",
+    "test": "gleam build && vitest --dir test",
     "lint": "eslint . --ext .ts",
     "format": "prettier --write .",
     "prepublishOnly": "pnpm build"
